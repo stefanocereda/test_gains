@@ -1,84 +1,19 @@
 import numpy as np
 import streamlit as st
 import pandas as pd
+from functions import *
 
 
-its = np.linspace(1, 100, 100)
-etas = [np.sqrt(8 * np.log(3) / it) for it in its]
-st.write("# Eta as function of iteration")
-st.line_chart(etas, x_label="iter", y_label="η")
-
-
-def compute_probs(gains, it, norm=False):
-    eta = np.sqrt(8 * np.log(3) / it)
-    if norm:
-        return compute_probs_eta_2(gains, eta)
-    return compute_probs_eta(gains, eta)
-
-
-def compute_probs_eta(gains, eta):
-    logits = np.array(gains, dtype=float)
-    logits -= np.max(logits)
-    exp_logits = np.exp(eta * logits)
-    probs = exp_logits / np.sum(exp_logits)
-    return probs
-
-
-def compute_probs_eta_2(gains, eta):
-    logits = np.array(gains, dtype=float)
-    logits -= np.max(logits)
-    if any(g != 0 for g in gains):
-        logits /= max(logits) - min(logits)
-    exp_logits = np.exp(eta * logits)
-    probs = exp_logits / np.sum(exp_logits)
-    return probs
-
-
-st.write("# Probabilities according to gains with iteration-based η")
-g0 = st.slider("gain0", -10.0, 10.0, step=0.1)
-g1 = st.slider("gain1", -10.0, 10.0, step=0.1)
-g2 = st.slider("gain2", -10.0, 10.0, step=0.1)
-
-gains = [g0, g1, g2]
-all_probs = np.asarray([compute_probs(gains, it) for it in its])
-
-chart_data = pd.DataFrame(
-    {
-        "iter": its,
-        "prob0": all_probs[:, 0] * 100,
-        "prob1": all_probs[:, 1] * 100,
-        "prob2": all_probs[:, 2] * 100,
-    }
-)
-st.line_chart(chart_data, x="iter", y_label="%")
-
-st.write("# Probabilities with variable gains and optional normalization")
-etas = np.linspace(0, 3, 100)
-all_probs = np.asarray([compute_probs_eta(gains, eta) for eta in etas])
-all_probs_2 = np.asarray([compute_probs_eta_2(gains, eta) for eta in etas])
-chart_data = pd.DataFrame(
-    {
-        "eta": etas,
-        "prob0": all_probs[:, 0] * 100,
-        "prob1": all_probs[:, 1] * 100,
-        "prob2": all_probs[:, 2] * 100,
-        "prob0_2": all_probs_2[:, 0] * 100,
-        "prob1_2": all_probs_2[:, 1] * 100,
-        "prob2_2": all_probs_2[:, 2] * 100,
-    }
-)
-st.line_chart(chart_data, x="eta", y_label="%")
+st.set_page_config("wide")
 
 
 st.write("# Example tuning")
 
 st.write("## Settings")
-col0, col1 = st.columns(2)
-with col0:
+with st.sidebar:
     scale = st.slider("Noisiness", 0.0, 10.0, 1.0, step=0.01)
     history = st.slider("History", 0.0, 2.0, 1.0)
     seed = st.number_input("Random seed", value=0)
-with col1:
     f0 = st.slider("Fitness af 0", -1.0, 1.0, -1.0, step=0.01)
     f1 = st.slider("Fitness af 1", -1.0, 1.0, 0.9, step=0.01)
     f2 = st.slider("Fitness af 2", -1.0, 1.0, 1.0, step=0.01)
