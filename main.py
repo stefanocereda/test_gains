@@ -5,17 +5,19 @@ from functions import *
 
 
 st.set_page_config("wide")
+with open("style.css") as css:
+    st.markdown(f"<style>{css.read()}</style>", unsafe_allow_html=True)
 
 
 st.write("# Example tuning")
 
 st.write("## Settings")
 with st.sidebar:
-    scale = st.slider("Noisiness", 0.0, 10.0, 1.0, step=0.01)
-    history = st.slider("History", 0.0, 2.0, 1.0)
-    seed = st.number_input("Random seed", value=0)
+    scale = st.slider("Noisiness", 0.0, 10.0, 3.0, step=0.01)
+    history = st.slider("History", 0.0, 2.0, 0.9)
+    seed = st.number_input("Random seed", value=1)
     f0 = st.slider("Fitness af 0", -1.0, 1.0, -1.0, step=0.01)
-    f1 = st.slider("Fitness af 1", -1.0, 1.0, 0.9, step=0.01)
+    f1 = st.slider("Fitness af 1", -1.0, 1.0, 0.7, step=0.01)
     f2 = st.slider("Fitness af 2", -1.0, 1.0, 1.0, step=0.01)
 
 np.random.seed(seed)
