@@ -4,15 +4,15 @@ import pandas as pd
 from functions import *
 
 
-st.set_page_config("wide")
+st.set_page_config(layout="wide")
 with open("style.css") as css:
     st.markdown(f"<style>{css.read()}</style>", unsafe_allow_html=True)
 
 
 st.write("# Example tuning")
 
-st.write("## Settings")
 with st.sidebar:
+    st.write("# Settings")
     scale = st.slider("Noisiness", 0.0, 10.0, 3.0, step=0.01)
     history = st.slider("History", 0.0, 2.0, 0.9)
     seed = st.number_input("Random seed", value=1)
